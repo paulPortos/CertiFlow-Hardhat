@@ -42,7 +42,7 @@ export default defineConfig({
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("https://eth-mainnet.g.alchemy.com/v2/RkgP5MKtu7SNxabxVUp6D"),
+      url: configVariable("https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
