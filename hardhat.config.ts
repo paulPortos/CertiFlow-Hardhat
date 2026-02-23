@@ -1,5 +1,8 @@
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable, defineConfig } from "hardhat/config";
+import { defineConfig } from "hardhat/config";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export default defineConfig({
   plugins: [hardhatToolboxViemPlugin],
@@ -9,7 +12,7 @@ export default defineConfig({
         version: "0.8.28",
         settings: {
           // Add this to fix Ganache compatibility
-          evmVersion: "paris" 
+          evmVersion: "paris"
         }
       },
       production: {
@@ -31,7 +34,7 @@ export default defineConfig({
     },
     ganache: {
       type: "http",            // Essential for external RPCs
-      url: "http://127.0.0.1:7545", 
+      url: "http://127.0.0.1:7545",
       chainId: 1337,           // Default for Ganache; check your Ganache settings
       accounts: "remote",      // Tells Hardhat to use the accounts already in Ganache
     },
@@ -42,8 +45,10 @@ export default defineConfig({
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: process.env.SEPOLIA_RPC_URL || "https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID",
+      accounts: process.env.SEPOLIA_PRIVATE_KEY
+        ? [process.env.SEPOLIA_PRIVATE_KEY]
+        : [],
     },
   },
 });

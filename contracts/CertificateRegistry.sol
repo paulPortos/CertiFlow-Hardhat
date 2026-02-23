@@ -41,6 +41,12 @@ contract CertificateRegistry {
         string reason
     );
     
+    /// @notice Emitted when ownership transfer is initiated
+    event OwnershipTransferStarted(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
+    
     // ==========================================================================
     // STORAGE
     // ==========================================================================
@@ -52,7 +58,6 @@ contract CertificateRegistry {
         bytes32 recipientHash;  // SHA-256(email + salt)
         uint256 version;        // Version number
         uint256 timestamp;      // Registration time
-        bool exists;            // Existence flag
         bool revoked;           // Revocation flag
         uint256 revokedAt;      // Revocation time
     }
@@ -65,6 +70,7 @@ contract CertificateRegistry {
     
     /// @dev Contract owner
     address public owner;
+    address public pendingOwner;
     
     /// @dev Authorized registrars (backend addresses)
     mapping(address => bool) public authorizedRegistrars;
@@ -106,10 +112,18 @@ contract CertificateRegistry {
         authorizedRegistrars[registrar] = false;
     }
     
-    /// @notice Transfer ownership
+    /// @notice Start ownership transfer (two-step)
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid address");
-        owner = newOwner;
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(owner, newOwner);
+    }
+    
+    /// @notice Accept ownership transfer
+    function acceptOwnership() external {
+        require(msg.sender == pendingOwner, "Not pending owner");
+        owner = pendingOwner;
+        pendingOwner = address(0);
     }
     
     // ==========================================================================
@@ -128,7 +142,7 @@ contract CertificateRegistry {
         string calldata ipfsCid,
         bytes32 recipientHash
     ) external onlyAuthorized returns (bool success) {
-        require(!certificates[metadataHash].exists, "Hash already registered");
+        require(certificates[metadataHash].timestamp == 0, "Hash already registered");
         require(bytes(ipfsCid).length > 0, "IPFS CID required");
         
         // Get current version logic
@@ -146,7 +160,6 @@ contract CertificateRegistry {
             recipientHash: recipientHash,
             version: newVersion,
             timestamp: block.timestamp,
-            exists: true,
             revoked: false,
             revokedAt: 0
         });
@@ -183,7 +196,7 @@ contract CertificateRegistry {
         bytes32 metadataHash,
         string calldata reason
     ) external onlyAuthorized returns (bool success) {
-        require(certificates[metadataHash].exists, "Certificate not found");
+        require(certificates[metadataHash].timestamp != 0, "Certificate not found");
         require(!certificates[metadataHash].revoked, "Already revoked");
         
         certificates[metadataHash].revoked = true;
@@ -219,7 +232,7 @@ contract CertificateRegistry {
     {
         Certificate memory cert = certificates[metadataHash];
         return (
-            cert.exists,
+            cert.timestamp != 0,
             cert.certificateId,
             cert.ipfsCid,
             cert.recipientHash,
@@ -237,7 +250,7 @@ contract CertificateRegistry {
         view
         returns (bool isOwner)
     {
-        if (!certificates[metadataHash].exists) return false;
+        if (certificates[metadataHash].timestamp == 0) return false;
         return certificates[metadataHash].recipientHash == userEmailHash;
     }
     
@@ -257,7 +270,7 @@ contract CertificateRegistry {
         returns (bool isValid) 
     {
         Certificate memory cert = certificates[metadataHash];
-        if (!cert.exists || cert.revoked) {
+        if (cert.timestamp == 0 || cert.revoked) {
             return false;
         }
         return latestCertificate[cert.certificateId] == metadataHash;

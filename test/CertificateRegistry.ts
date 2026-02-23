@@ -35,7 +35,6 @@ describe("CertificateRegistry", async () => {
       recipHash,    // recipientHash
       version,      // version
       timestamp,    // timestamp
-      exists,       // exists
       revoked,      // revoked
       revokedAt     // revokedAt
     ] = certData;
@@ -47,12 +46,10 @@ describe("CertificateRegistry", async () => {
     console.log("Recipient Hash:", recipHash);
     console.log("Version:", version.toString());
     console.log("Timestamp:", timestamp.toString());
-    console.log("Exists:", exists);
     console.log("Revoked:", revoked);
     console.log("==============================\n");
 
     // 4. Run Assertions
-    assert.equal(exists, true, "Certificate 'exists' flag should be true");
     assert.equal(id, certId, "Certificate ID should match");
     assert.equal(cid, ipfsCid, "IPFS CID should match");
     assert.equal(version, 1n, "Initial version should be 1");
@@ -84,7 +81,7 @@ describe("CertificateRegistry", async () => {
 
     // Verify revocation
     const certData = await registry.read.certificates([metadataHash]);
-    const [, , , , , , revoked] = certData;
+    const [, , , , , revoked] = certData;
 
     console.log("\n=== Certificate Revoked ===");
     console.log("Metadata Hash:", metadataHash);
@@ -116,12 +113,12 @@ describe("CertificateRegistry", async () => {
       metadataHash,
       recipientHash
     ]);
-    
+
     console.log("\n=== Ownership Verification ===");
     console.log("Metadata Hash:", metadataHash);
     console.log("Recipient Hash:", recipientHash);
     console.log("Is Owner (Correct):", isOwnerCorrect);
-    
+
     assert.equal(isOwnerCorrect, true, "Should verify correct owner");
 
     // Verify incorrect owner
@@ -130,10 +127,10 @@ describe("CertificateRegistry", async () => {
       metadataHash,
       wrongHash
     ]);
-    
+
     console.log("Is Owner (Wrong Hash):", isOwnerWrong);
     console.log("================================\n");
-    
+
     assert.equal(isOwnerWrong, false, "Should reject wrong owner");
   });
 
@@ -185,7 +182,7 @@ describe("CertificateRegistry", async () => {
     const latest = await registry.read.getLatestCertificate([certId]);
     console.log("Latest Certificate Hash:", latest);
     console.log("================================\n");
-    
+
     assert.equal(latest, hash2, "Latest certificate should be the second hash");
   });
 
@@ -207,11 +204,11 @@ describe("CertificateRegistry", async () => {
 
     // Old version should be valid
     let isValid = await registry.read.isValidCertificate([hash1]);
-    
+
     console.log("\n=== Certificate Validation ===");
     console.log("Certificate ID:", certId.toString());
     console.log("Hash 1 Valid (before update):", isValid);
-    
+
     assert.equal(isValid, true, "First version should initially be valid");
 
     // Register second version
@@ -226,14 +223,14 @@ describe("CertificateRegistry", async () => {
     // Old version should no longer be valid
     isValid = await registry.read.isValidCertificate([hash1]);
     console.log("Hash 1 Valid (after update):", isValid);
-    
+
     assert.equal(isValid, false, "First version should no longer be valid");
 
     // New version should be valid
     isValid = await registry.read.isValidCertificate([hash2]);
     console.log("Hash 2 Valid:", isValid);
     console.log("================================\n");
-    
+
     assert.equal(isValid, true, "Latest version should be valid");
   });
 
@@ -296,7 +293,7 @@ describe("CertificateRegistry", async () => {
 
     // Verify it was registered
     const certData = await registry.read.certificates([metadataHash]);
-    const [, , , , , exists] = certData;
-    assert.equal(exists, true, "Owner should be able to register");
+    const [, , , , timestamp] = certData;
+    assert.ok(timestamp > 0n, "Owner should be able to register");
   });
 });

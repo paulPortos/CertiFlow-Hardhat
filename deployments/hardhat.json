@@ -1,0 +1,9 @@
+{
+  "network": "hardhat",
+  "timestamp": "2026-02-23T12:38:00.008Z",
+  "contracts": {
+    "CertificateRegistry": "0xf801cd17bd017f1d3ffe87d9a1b66e7b6d0314ca",
+    "EntityRegistry": "0x492a6b096349efdf41d8d09ffac064e68818ec2d",
+    "AttachmentRegistry": "0x96fee7878b15166c5d753b0f579a75e4c97680cb"
+  }
+}
