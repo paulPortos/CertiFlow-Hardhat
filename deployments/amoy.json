@@ -1,0 +1,9 @@
+{
+  "network": "amoy",
+  "timestamp": "2026-02-24T09:52:32.355Z",
+  "contracts": {
+    "CertificateRegistry": "0x8fab86cf24878a0a4dceb15222f12fd0ce638d9f",
+    "EntityRegistry": "0x61cdf995fad54b3cfbb5a46089536fff6a01541d",
+    "AttachmentRegistry": "0xeaac0884a31787758e381fd0415fea2fde15830c"
+  }
+}

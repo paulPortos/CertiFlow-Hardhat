@@ -8,23 +8,28 @@ const __dirname = path.dirname(__filename);
 
 async function main() {
     console.log("\n=======================================================");
-    console.log("  CERTIFLOW SMART CONTRACT DEPLOYMENT (LOCAL / GANACHE)");
+    console.log("  CERTIFLOW SMART CONTRACT DEPLOYMENT");
     console.log("=======================================================\n");
 
-    const { viem } = await network.connect();
+    const networkConnection = await network.connect();
+    const { viem } = networkConnection;
 
-    const networkName = (network as any).name || "hardhat";
+    const networkName = networkConnection.networkName || (network as any).name || "unknown";
     console.log(`📡 Connecting to network: ${networkName}`);
+
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     // 1. Deploy CertificateRegistry
     console.log("\n📝 Deploying CertificateRegistry...");
     const certRegistry = await viem.deployContract("CertificateRegistry");
     console.log("✅ CertificateRegistry deployed at:", certRegistry.address);
+    await sleep(3000);
 
     // 2. Deploy EntityRegistry
     console.log("\n📝 Deploying EntityRegistry...");
     const entityRegistry = await viem.deployContract("EntityRegistry");
     console.log("✅ EntityRegistry deployed at:", entityRegistry.address);
+    await sleep(3000);
 
     // 3. Deploy AttachmentRegistry
     console.log("\n📝 Deploying AttachmentRegistry...");

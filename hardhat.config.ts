@@ -50,5 +50,14 @@ export default defineConfig({
         ? [process.env.SEPOLIA_PRIVATE_KEY]
         : [],
     },
+    amoy: {
+      type: "http",
+      chainType: "l1",
+      url: process.env.AMOY_RPC_URL || "https://rpc-amoy.polygon.technology/",
+      chainId: 80002,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY
+        ? [process.env.DEPLOYER_PRIVATE_KEY]
+        : [],
+    },
   },
 });
