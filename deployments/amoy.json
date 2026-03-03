@@ -1,9 +1,9 @@
 {
   "network": "amoy",
-  "timestamp": "2026-02-24T09:52:32.355Z",
+  "timestamp": "2026-03-02T13:33:19.597Z",
   "contracts": {
-    "CertificateRegistry": "0x8fab86cf24878a0a4dceb15222f12fd0ce638d9f",
-    "EntityRegistry": "0x61cdf995fad54b3cfbb5a46089536fff6a01541d",
-    "AttachmentRegistry": "0xeaac0884a31787758e381fd0415fea2fde15830c"
+    "CertificateRegistry": "0x825423f07a56a90454c4f659c910abeaeef84052",
+    "EntityRegistry": "0x48ccebea7edcb5e31f39bba144ef2849555ab640",
+    "AttachmentRegistry": "0x8f3b555a6a2e495d666837aa72db1bc523eed577"
   }
 }
